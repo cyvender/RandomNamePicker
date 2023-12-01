@@ -8,6 +8,7 @@ function App() {
   const [assndNumbers, setAssndNumbers] = useState([]);
   const [namesList, setNamesList] = useState([]);
   const [randomNumbers, setRandomNumbers] = useState("");
+  const [clicked, setClicked] = useState(false);
 
   const handleInput = (e) => {
     e.preventDefault();
@@ -40,15 +41,15 @@ function App() {
     setNamesList(updatedNamesList);
   }
 
-  let numberMethod;
   const handleWinner = () => {
     let i = namesList.length;
-    numberMethod = Math.floor(Math.random() * i);
+    const numberMethod = Math.floor(Math.random() * i);
     if (namesList.length > 0) {
       setRandomNumbers(namesList[numberMethod].name);
     } else {
       setRandomNumbers("no contestants");
     }
+    setClicked(true);
   };
   const handleNewWinnerMethod = () => {
     let i = points;
@@ -98,11 +99,12 @@ function App() {
         ))}
       </ul>
       <button onClick={handleWinner}>Winner</button>
-      {namesList.length > 0 ? (
-        <>
+      <br></br>
+      {namesList.length > 0 && clicked ? (
+        <h3>
           And the winner is <br></br>
-          <ff>{randomNumbers}!</ff>{" "}
-        </>
+          <h1 style={{ color: "red" }}>{randomNumbers}!</h1>{" "}
+        </h3>
       ) : null}
     </div>
   );
