@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { useState } from "react";
 
@@ -9,6 +8,7 @@ function App() {
   const [namesList, setNamesList] = useState([]);
   const [randomNumbers, setRandomNumbers] = useState("");
   const [clicked, setClicked] = useState(false);
+  const [savedList, setSavedList] = useState([]);
 
   const handleInput = (e) => {
     e.preventDefault();
@@ -68,15 +68,36 @@ function App() {
     setRandom(Math.random());
   }
 
-  console.log(namesList);
-  console.log(name);
-  console.log(points);
-  console.log(randomNumbers);
+  // console.log(namesList);
+  console.log("names list is " + namesList.map((name) => name.name));
+  // console.log(points);
+  // console.log(randomNumbers);
+  console.log("saved list is " + savedList.map((name) => name.name));
 
   const test = () => {
     if (namesList.length > 0) {
       return <>The winner is {namesList[randomNumbers].name}!</>;
     }
+  };
+
+  const handleSaveList = () => {
+    setSavedList((prevList) => {
+      let namesListCopy = [...namesList];
+      return namesListCopy;
+    });
+  };
+  const handleUseSavedList = () => {
+    setNamesList((prevList) => {
+      let useSavedList = savedList;
+      return useSavedList;
+    });
+  };
+
+  const handleClearAll = () => {
+    setNamesList((prevList) => {
+      let namesListCleared = [];
+      return namesListCleared;
+    });
   };
 
   return (
@@ -106,6 +127,10 @@ function App() {
           <h1 style={{ color: "red" }}>{randomNumbers}!</h1>{" "}
         </h3>
       ) : null}
+      <button onClick={handleClearAll}>Clear All</button>
+      <br></br>
+      <button onClick={handleSaveList}>Save list</button>
+      <button onClick={handleUseSavedList}>Use Saved List</button>
     </div>
   );
 }
