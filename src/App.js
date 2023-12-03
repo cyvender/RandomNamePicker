@@ -46,10 +46,10 @@ function App() {
     const numberMethod = Math.floor(Math.random() * i);
     if (namesList.length > 0) {
       setRandomNumbers(namesList[numberMethod].name);
+      setClicked(true);
     } else {
-      setRandomNumbers("no contestants");
+      setRandomNumbers("Sorry, no contestants");
     }
-    setClicked(true);
   };
   const handleNewWinnerMethod = () => {
     let i = points;
@@ -68,8 +68,9 @@ function App() {
     setRandom(Math.random());
   }
 
-  // console.log(namesList);
-  console.log("names list is " + namesList.map((name) => name.name));
+  console.log(namesList);
+  console.log("random numbers is " + randomNumbers);
+  // console.log("names list is " + namesList.map((name) => name.name));
   // console.log(points);
   // console.log(randomNumbers);
   console.log("saved list is " + savedList.map((name) => name.name));
@@ -95,16 +96,21 @@ function App() {
 
   const handleClearAll = () => {
     setNamesList((prevList) => {
-      let namesListCleared = [];
-      return namesListCleared;
+      let useNewNamesList = [];
+      return useNewNamesList;
     });
+    setClicked(false);
   };
 
   return (
     <div className="App">
       <h1>Random Name Picker</h1>
       Name:
-      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <input
+        value={name}
+        // style={{ textTransform: "capitalize" }}
+        onChange={(e) => setName(e.target.value)}
+      />
       <button onClick={handleInput}>Enter</button>
       <ul>
         {namesList.map((item, index) => (
