@@ -9,6 +9,7 @@ function App() {
   const [randomNumbers, setRandomNumbers] = useState("");
   const [clicked, setClicked] = useState(false);
   const [savedList, setSavedList] = useState([]);
+  const [noContestants, setNoContestants] = useState("");
 
   const handleInput = (e) => {
     e.preventDefault();
@@ -47,9 +48,8 @@ function App() {
     if (namesList.length > 0) {
       setRandomNumbers(namesList[numberMethod].name);
       setClicked(true);
-    } else {
-      setRandomNumbers("Sorry, no contestants");
     }
+    setNoContestants("Sorry, no contestants");
   };
   const handleNewWinnerMethod = () => {
     let i = points;
@@ -73,6 +73,7 @@ function App() {
   // console.log("names list is " + namesList.map((name) => name.name));
   // console.log(points);
   // console.log(randomNumbers);
+  console.log(clicked);
   console.log("saved list is " + savedList.map((name) => name.name));
 
   const test = () => {
@@ -100,6 +101,7 @@ function App() {
       return useNewNamesList;
     });
     setClicked(false);
+    setNoContestants("");
   };
 
   return (
@@ -125,17 +127,18 @@ function App() {
           </li>
         ))}
       </ul>
-      <button onClick={handleWinner}>Winner</button>
-      <br></br>
       {namesList.length > 0 && clicked ? (
         <h3>
           And the winner is <br></br>
           <h1 style={{ color: "red" }}>{randomNumbers}!</h1>{" "}
         </h3>
       ) : null}
+      {!(namesList.length > 0) ? <h3>{noContestants}</h3> : null}
+      <button onClick={handleWinner}>Winner</button>
+      <br></br>
       <button onClick={handleClearAll}>Clear All</button>
       <br></br>
-      <button onClick={handleSaveList}>Save list</button>
+      <button onClick={handleSaveList}>Save List</button>
       <button onClick={handleUseSavedList}>Use Saved List</button>
     </div>
   );
