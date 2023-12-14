@@ -3,19 +3,22 @@ import { useState } from "react";
 
 function App() {
   const [name, setName] = useState("");
-  const [weight, setWeight] = useState(1);
+  //const [weight, setWeight] = useState(1);
+
   const [namesList, setNamesList] = useState([]);
   const [winner, setWinner] = useState("");
   const [clicked, setClicked] = useState(false);
   const [savedList, setSavedList] = useState([]);
   const [noContestants, setNoContestants] = useState("");
+  const [clickedCount, setClickedCount] = useState(0);
 
   const handleInput = (e) => {
     e.preventDefault();
 
     const data = {
       name: name,
-      weight: weight,
+      weight: 1,
+      winCount: 0,
     };
     setNamesList([...namesList, data]);
     setName("");
@@ -33,6 +36,7 @@ function App() {
       setClicked(false);
     } else {
       setClicked(true);
+      setClickedCount(clickedCount + 1);
     }
 
     setNoContestants("Sorry, no contestants");
@@ -43,12 +47,14 @@ function App() {
       cumulativeWeights[i] =
         namesList[i].weight + (cumulativeWeights[i - 1] || 0);
     }
-    console.log("cumulativeWeights: " + cumulativeWeights);
+    //console.log("cumulativeWeights: " + cumulativeWeights);
 
     const maxCumulativeWeight = cumulativeWeights[cumulativeWeights.length - 1];
-    console.log("maxCumulativeWeights: " + maxCumulativeWeight);
+    // console.log(
+    //   "maxCumulativeWeights from handleWinner: " + maxCumulativeWeight
+    // );
     const winningNumber = Math.random() * maxCumulativeWeight;
-    console.log("winningNumber: " + winningNumber);
+    //console.log("winningNumber: " + winningNumber);
     for (
       let namesListIndex = 0;
       namesListIndex < namesList.length;
@@ -56,17 +62,18 @@ function App() {
     ) {
       if (cumulativeWeights[namesListIndex] >= winningNumber) {
         setWinner(namesList[namesListIndex].name);
+        namesList[namesListIndex].winCount += 1;
         return;
       }
     }
   };
 
   console.log(namesList);
-  console.log("winner " + winner);
-  // console.log("names list is " + namesList.map((name) => name.name));
+  //console.log("winner " + winner);
+  //console.log("names list is " + namesList.map((name) => name.name));
   // console.log(randomNumbers);
-  console.log(clicked);
-  console.log("saved list is " + savedList.map((name) => name.name));
+  //console.log(clicked);
+  //console.log("saved list is " + savedList.map((name) => name.name));
 
   const handleSaveList = () => {
     setSavedList((prevList) => {
@@ -87,19 +94,43 @@ function App() {
     });
     setClicked(false);
     setNoContestants("");
+    setClickedCount(0);
   };
+
+  //needs to be outside handlWeight so it includes the weight input that triggers the onChange
+  const cumulativeWeights = [];
+  for (let i = 0; i < namesList.length; i += 1) {
+    cumulativeWeights[i] =
+      namesList[i].weight + (cumulativeWeights[i - 1] || 0);
+  }
+  const maxCumulativeWeight = cumulativeWeights[cumulativeWeights.length - 1];
+  //console.log("maxCumulativeWeight global: " + maxCumulativeWeight);
+
+  const chances = [];
+  for (let i = 0; i < namesList.length; i += 1) {
+    chances[i] =
+      Math.round((100 / maxCumulativeWeight) * namesList[i].weight * 10) / 10;
+  }
+  //console.log("chances: " + chances);
+
   const handleWeight = (e, index) => {
     const { value } = e.target;
     const newWeight = parseFloat(value);
+
     setNamesList((prevData) => {
       return prevData.map((item, i) =>
         i === index ? { ...item, weight: newWeight } : item
       );
     });
   };
+
   return (
     <div className="App">
       <h1>Random Name Picker</h1>
+      <p>
+        Enter list of names and click Winner to choose name randomly <br></br>
+        Enter number to increase chance for specific entry
+      </p>
       Name:<> </>
       <input
         value={name}
@@ -117,6 +148,7 @@ function App() {
               value={item.weight}
               onChange={(e) => handleWeight(e, index)}
             />
+            {chances[index]}%
             <button onClick={(e) => handleDelete(index, e)}>Delete</button>
           </li>
         ))}
@@ -134,6 +166,25 @@ function App() {
       <br></br>
       <button onClick={handleSaveList}>Save List</button>
       <button onClick={handleUseSavedList}>Use Saved List</button>
+      <br></br>
+      <br></br>
+      <br></br>
+      <strong>See the results below:</strong>
+      <br></br>
+      Winner chosen {clickedCount} times.
+      <ul>
+        {namesList.map((item, index) => (
+          <li key={index}>
+            {item.name} won {item.winCount} times.{" "}
+            {clickedCount > 0 && (
+              <>
+                {Math.round((item.winCount / clickedCount) * 100 * 10) / 10}%.
+              </>
+            )}{" "}
+            Should be: {chances[index]}%
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
